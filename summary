@@ -1,0 +1,56 @@
+#!/usr/local/bin/ruby -w
+
+# Dan Richert 2006
+# dan.richert@gmail.com
+
+unless ARGV.length >= 1
+  puts "
+  summary <text> <depth> <length> <opt: linear_degrade on/off>
+  "
+  exit
+end
+    
+text = File.open(ARGV[0]||'/usr/share/dict/words', 'r').read
+depth = ARGV[1].to_i
+len = ARGV[2].to_i
+if ARGV[3]=='d': linear_degrade = true end
+
+def csplit(s)
+  a = []
+  s.each_byte {|b| a.push(b.chr)}
+  return a
+end
+
+def markov(a, depth)
+  h = Hash.new
+  a.each_index do |ndx|
+    temp = []
+    depth.times {|i| temp.push(a[ndx+(i+1)])}
+    unless h[a[ndx]]: h[a[ndx]] = [] end
+    h[a[ndx]].push(temp)
+  end
+  return h
+end 
+
+while depth>1 
+  #puts "\n\n\n+++ depth: #{depth}\n\n\n"
+  chars = csplit(text)
+  h = markov(chars, depth)
+  key = chars[rand(chars.length)]
+  section = ''
+  if linear_degrade: len += len/8 end
+  while section.length < len
+    if h[key] 
+      selection_ndx = rand(h[key].length)
+      selection_arr = h[key][selection_ndx]
+      selection_str = selection_arr.join
+      section += selection_str
+      key = section[section.length-1].chr
+    end
+  end
+  print section[0..len]
+  depth -= 1
+end
+puts "\n\n"
+            
+        
