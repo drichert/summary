@@ -1,0 +1,5 @@
+Markov text generator with optional depth degradation (sense -> noise length of text output)
+
+This code came from a text project during my MFA studies at CalArts (2006).
+
+See http://phxom.matterwave.net/index.php?id=34 for text generated using this script.
